@@ -9,6 +9,15 @@
 (() => {
   'use strict';
 
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return;
+  }
+
+  if (window.bdwpHeaderInit) {
+    return;
+  }
+  window.bdwpHeaderInit = true;
+
   const $  = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
 
@@ -209,14 +218,20 @@
   });
 
   // Header "is-scrolled" state (throttled)
+  const updateScrolledState = (isScrolled) => {
+    if (header) {
+      header.classList.toggle('is-scrolled', isScrolled);
+    }
+    body.classList.toggle('is-scrolled', isScrolled);
+  };
+
   const onScroll = (() => {
     let ticking = false;
     return () => {
-      if (!header) return;
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        header.classList.toggle('is-scrolled', (window.scrollY || window.pageYOffset) > 10);
+        updateScrolledState((window.scrollY || window.pageYOffset) > 10);
         ticking = false;
       });
     };
