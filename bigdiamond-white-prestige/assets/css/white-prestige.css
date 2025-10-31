@@ -29,9 +29,9 @@
         --text: var(--bdwp-color-text);
         --muted: #6b6b6b;
         --container: min(1200px, 92vw);
-        --header-height: 96px;
         color-scheme: light;
-        --bdwp-header-h: 130px;
+        --bdwp-header-h: 128px;
+        --bdwp-admin-bar-offset: 0px;
 }
 
 /* Critical layout */
@@ -54,7 +54,7 @@ body {
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
         overflow-x: hidden;
-        padding-top: 0 !important;
+        padding-top: calc(var(--bdwp-header-h) + var(--bdwp-admin-bar-offset)) !important;
 }
 
 html {
@@ -62,31 +62,27 @@ html {
 }
 
 body.admin-bar {
-        padding-top: calc(var(--bdwp-header-h) + 32px) !important;
+        --bdwp-admin-bar-offset: 32px;
 }
 
-body.admin-bar .site-header {
-        top: 32px;
+body.admin-bar .site-header,
+body.admin-bar .bdwp-header {
+        top: var(--bdwp-admin-bar-offset);
 }
 
 @media (max-width: 980px) {
         :root {
-                --header-height: 88px;
+                --bdwp-header-h: 112px;
         }
 
         body.admin-bar {
-                padding-top: calc(var(--header-height) + 46px);
-        }
-
-        body.admin-bar .site-header {
-                top: 46px;
+                --bdwp-admin-bar-offset: 46px;
         }
 }
 
 @media (max-width: 600px) {
         :root {
-                --header-height: 82px;
-                --bdwp-header-h: 160px;
+                --bdwp-header-h: 136px;
         }
 }
 
@@ -248,7 +244,6 @@ margin-top: 1rem;
         background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(10px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        border-bottom: 1px solid rgba(212, 175, 55, 0.18);
         transition: background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
 }
 
@@ -2791,23 +2786,22 @@ body.cart-drawer-open {
   background: rgba(255,255,255,0.82);
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  box-shadow: 0 10px 30px rgba(0,0,0,.04);
+  border-bottom: 0;
+  box-shadow: 0 18px 40px rgba(0,0,0,.08);
 
   color: #2f2f2f;
   font-family: "Inter", system-ui, sans-serif;
 }
 
-/* 2. ciało strony odsunięte pod stały header */
-body {
-  /* wysokość nagłówka ~80-90px desktop, ~90-100px mobile,
-     dajemy bezpiecznie 100px żeby nie nachodziło */
-  padding-top: 100px !important;
+.bdwp-header.is-scrolled {
+  background: rgba(255,255,255,0.96);
+  box-shadow: 0 12px 36px rgba(0,0,0,.12);
 }
-body.admin-bar {
-  /* jeżeli masz pasek admina WP u góry, header jest pod nim,
-     więc dorzucamy te ~32px */
-  padding-top: 132px !important;
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .bdwp-header {
+    background: rgba(255,255,255,0.96);
+  }
 }
 
 /* 3. wewnętrzna siatka nagłówka */
@@ -3221,20 +3215,23 @@ body.admin-bar {
   list-style:none; margin:0; padding:0;
   display:grid; gap:24px; grid-template-columns: repeat(3, 1fr);
 }
+.bdwp-hero-cats__item{ list-style:none; }
 .bdwp-hero-cats__card{
-  display:block; text-decoration:none; color:#111; background:#fff;
-  border-radius:16px; overflow:hidden;
-  box-shadow: 0 18px 40px rgba(0,0,0,.10);
-  transition: transform .25s ease, box-shadow .25s ease;
+  display:block; text-decoration:none; color:#f5f5f5; background:rgba(18,18,18,0.65);
+  border-radius:18px; overflow:hidden;
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.32), 0 18px 46px rgba(0,0,0,0.35);
+  transition: transform .25s ease, box-shadow .25s ease, color .25s ease;
 }
-.bdwp-hero-cats__card:hover{ transform: translateY(-4px); box-shadow: 0 24px 60px rgba(0,0,0,.12); }
+.bdwp-hero-cats__card:hover,
+.bdwp-hero-cats__card:focus-visible{ transform: translateY(-6px); box-shadow: 0 0 0 1px rgba(255,215,148,0.65), 0 30px 60px rgba(0,0,0,0.42); outline: none; }
 
-.bdwp-hero-cats__media{ display:block; aspect-ratio: 4/3; overflow:hidden; }
-.bdwp-hero-cats__media img{ width:100%; height:100%; object-fit:cover; display:block; }
+.bdwp-hero-cats__media{ display:block; aspect-ratio: 4/3; overflow:hidden; background:#000; }
+.bdwp-hero-cats__media img{ width:100%; height:100%; object-fit:cover; display:block; filter: saturate(1.05) contrast(1.02); }
 .bdwp-hero-cats__label{
   display:block; text-transform:uppercase; letter-spacing:.6px;
   font-family: var(--wp--preset--font-family--playfair, "Playfair Display"), serif;
   padding:18px 20px 22px;
+  color:#fefefe;
 }
 
 /* RWD */
@@ -3323,9 +3320,7 @@ body.admin-bar {
 
 /* ==== FINAL FIX: header offset, hero full-bleed black, model lower+bigger, dark category bridge ==== */
 
-/* Header hidden at load; no global top padding until scrolled */
-body{ padding-top: 0 !important; }
-body.is-scrolled{ padding-top: var(--bdwp-header-h) !important; }
+/* Header offset utrzymany przez zmienne --bdwp-header-h/--bdwp-admin-bar-offset (bez CLS) */
 
 /* Remove any container "panels" on homepage so black hero is flush */
 .home .grid-container,

@@ -25,7 +25,7 @@
 		<div class="bdwp-header__row bdwp-header__row--desktop" aria-label="<?php esc_attr_e( 'Nagłówek (desktop)', 'bigdiamond' ); ?>">
 			<!-- BRAND / LOGO -->
 			<div class="bdwp-header__brand">
-				<a class="bdwp-header__logo-link" href="<?= esc_url( home_url( '/' ) ); ?>" aria-label="<?php bloginfo('name'); ?>">
+				<a class="bdwp-header__logo-link" href="<?= esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>">
 					<img
 						src="<?= esc_url( get_stylesheet_directory_uri() . '/assets/img/logo2.png' ); ?>"
 						alt="BigDIAMOND — jubiler Kraków"
@@ -76,7 +76,7 @@
 		<!-- Mobile rows -->
 		<div class="bdwp-header__row bdwp-header__row--mobile" aria-label="<?php esc_attr_e( 'Nagłówek (mobile)', 'bigdiamond' ); ?>">
 			<div class="bdwp-header__mobile-top">
-				<a class="bdwp-header__logo-link" href="<?= esc_url( home_url( '/' ) ); ?>" aria-label="<?php bloginfo('name'); ?>">
+				<a class="bdwp-header__logo-link" href="<?= esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>">
 					<img
 						src="<?= esc_url( get_stylesheet_directory_uri() . '/assets/img/logo2.png' ); ?>"
 						alt="BigDIAMOND — jubiler Kraków"

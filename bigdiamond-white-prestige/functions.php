@@ -403,62 +403,7 @@ add_action( 'wp_enqueue_scripts', function() {
 	wp_dequeue_style( 'wc-blocks-style' );
 }, 20 );
 
-// --- 1. P0.4: Pole grawerunku (Personalizacja) ---
-
-/**
- * Wyświetla pole tekstowe dla grawerunku przed przyciskiem "Dodaj do koszyka".
- */
-add_action( 'woocommerce_before_add_to_cart_button', 'bdwp_add_engraving_field', 9 );
-function bdwp_add_engraving_field(): void {
-	// Możesz dodać logikę, aby wyświetlać to pole tylko dla określonych kategorii
-	// np. if ( ! has_term( 'pierscionki', 'product_cat' ) ) return;
-
-	echo '<fieldset class="bdwp-engraving-field">';
-	echo '<label for="bdwp_engraving_text">' . esc_html__( 'Twój grawerunek (opcjonalnie)', 'bigdiamond-white-prestige' ) . '</label>';
-	echo '<input type="text" id="bdwp_engraving_text" name="bdwp_engraving_text" maxlength="30" placeholder="' . esc_attr__( 'np. Wasza data lub inicjały', 'bigdiamond-white-prestige' ) . '">';
-	echo '<small class="bdwp-engraving-field__note">' . esc_html__( 'Maksymalnie 30 znaków. Produkty grawerowane nie podlegają zwrotowi.', 'bigdiamond-white-prestige' ) . '</small>';
-	echo '</fieldset>';
-}
-
-/**
- * Zapisuje dane z pola grawerunku do danych koszyka.
- */
-add_filter( 'woocommerce_add_cart_item_data', 'bdwp_save_engraving_to_cart_item', 10, 3 );
-function bdwp_save_engraving_to_cart_item( array $cart_item_data, int $product_id, int $variation_id ): array {
-	if ( isset( $_POST['bdwp_engraving_text'] ) && ! empty( $_POST['bdwp_engraving_text'] ) ) {
-		$engraving_text = sanitize_text_field( $_POST['bdwp_engraving_text'] );
-		// Zapisujemy oczyszczony tekst grawerunku
-		$cart_item_data['bdwp_engraving'] = substr( $engraving_text, 0, 30 );
-	}
-	return $cart_item_data;
-}
-
-/**
- * Wyświetla zapisany grawerunek w koszyku i przy kasie.
- */
-add_filter( 'woocommerce_get_item_data', 'bdwp_display_engraving_in_cart', 10, 2 );
-function bdwp_display_engraving_in_cart( array $item_data, array $cart_item ): array {
-	if ( isset( $cart_item['bdwp_engraving'] ) ) {
-		$item_data[] = array(
-			'key'     => __( 'Grawerunek', 'bigdiamond-white-prestige' ),
-			'value'   => esc_html( $cart_item['bdwp_engraving'] ),
-			'display' => '',
-		);
-	}
-	return $item_data;
-}
-
-/**
- * Zapisuje grawerunek do meta danych pozycji zamówienia (widoczne dla admina).
- */
-add_action( 'woocommerce_checkout_create_order_line_item', 'bdwp_save_engraving_to_order_item', 10, 4 );
-function bdwp_save_engraving_to_order_item( $item, string $cart_item_key, array $values, $order ): void {
-	if ( isset( $values['bdwp_engraving'] ) ) {
-		$item->add_meta_data( __( 'Grawerunek', 'bigdiamond-white-prestige' ), $values['bdwp_engraving'] );
-	}
-}
-
-// --- 2. P0.1: Slot na wideo produktowe ---
+// --- 1. P0.1: Slot na wideo produktowe ---
 
 /**
  * Wyświetla wideo produktowe (z pola niestandardowego) nad galerią.
@@ -488,14 +433,25 @@ function bdwp_display_product_video(): void {
  */
 add_filter( 'woocommerce_product_tabs', 'bdwp_add_specs_tab', 15 );
 function bdwp_add_specs_tab( array $tabs ): array {
-	// Dodaj nową zakładkę
+	$product = wc_get_product( get_the_ID() );
+
+	if ( ! $product instanceof WC_Product ) {
+		return $tabs;
+	}
+
+	$four_c     = function_exists( 'bdwp_get_product_four_c_data' ) ? bdwp_get_product_four_c_data( $product->get_id() ) : [];
+	$cert_url   = function_exists( 'bdwp_get_product_certificate_url' ) ? bdwp_get_product_certificate_url( $product->get_id() ) : '';
+
+	if ( empty( $four_c ) && ! $cert_url ) {
+		return $tabs;
+	}
+
 	$tabs['bdwp_specs'] = array(
 		'title'    => __( 'Certyfikat i 4C', 'bigdiamond-white-prestige' ),
-		'priority' => 15, // Ustaw priorytet (np. 15, aby była przed Opisem (20))
+		'priority' => 15,
 		'callback' => 'bdwp_render_product_specs_tab',
 	);
 
-	// Przesuń zakładkę FAQ (z inc/woo.php) na później, jeśli istnieje
 	if ( isset( $tabs['bdwp_faq'] ) ) {
 		$tabs['bdwp_faq']['priority'] = 80;
 	}
@@ -509,40 +465,30 @@ function bdwp_add_specs_tab( array $tabs ): array {
 function bdwp_render_product_specs_tab(): void {
 	global $product;
 
-	// Pobierz dane z pól niestandardowych produktu
-	$cert_link = get_post_meta( $product->get_id(), '_bdwp_cert_url', true );
-	$cut       = get_post_meta( $product->get_id(), '_bdwp_cut', true );
-	$color     = get_post_meta( $product->get_id(), '_bdwp_color', true );
-	$clarity   = get_post_meta( $product->get_id(), '_bdwp_clarity', true );
-	$carat     = get_post_meta( $product->get_id(), '_bdwp_carat', true );
+	if ( ! $product instanceof WC_Product ) {
+		return;
+	}
 
-	// Sprawdź, czy mamy jakiekolwiek dane do wyświetlenia
-	if ( empty( $cert_link ) && empty( $cut ) && empty( $color ) && empty( $clarity ) && empty( $carat ) ) {
+	$four_c   = function_exists( 'bdwp_get_product_four_c_data' ) ? bdwp_get_product_four_c_data( $product->get_id() ) : [];
+	$cert_url = function_exists( 'bdwp_get_product_certificate_url' ) ? bdwp_get_product_certificate_url( $product->get_id() ) : '';
+
+	if ( empty( $four_c ) && ! $cert_url ) {
 		echo '<p>' . esc_html__( 'Szczegółowa specyfikacja (4C) oraz certyfikat są dostępne na życzenie. Skontaktuj się z naszym concierge.', 'bigdiamond-white-prestige' ) . '</p>';
 		return;
 	}
 
 	echo '<h2>' . esc_html__( 'Jakość BigDIAMOND', 'bigdiamond-white-prestige' ) . '</h2>';
-	echo '<p>' . esc_html__( 'Każdy diament jest przez nas weryfikowany pod kątem 4C (Cut, Color, Clarity, Carat), aby zapewnić najwyższy standard i blask.', 'bigdiamond-white-prestige' ) . '</p>';
+	echo '<p>' . esc_html__( 'Każdy diament potwierdzamy raportem 4C (Cut, Color, Clarity, Carat) wystawionym przez niezależne laboratoria.', 'bigdiamond-white-prestige' ) . '</p>';
 
-	// Lista specyfikacji 4C
-	echo '<ul class="bdwp-specs-list">';
-	if ( ! empty( $cut ) ) {
-		echo '<li><strong>' . esc_html__( 'Szlif (Cut)', 'bigdiamond-white-prestige' ) . ':</strong> ' . esc_html( $cut ) . '</li>';
+	if ( ! empty( $four_c ) ) {
+		echo '<ul class="bdwp-specs-list">';
+		foreach ( $four_c as $entry ) {
+			echo '<li><strong>' . esc_html( $entry['label'] ) . ':</strong> ' . esc_html( $entry['value'] ) . '</li>';
+		}
+		echo '</ul>';
 	}
-	if ( ! empty( $color ) ) {
-		echo '<li><strong>' . esc_html__( 'Kolor (Color)', 'bigdiamond-white-prestige' ) . ':</strong> ' . esc_html( $color ) . '</li>';
-	}
-	if ( ! empty( $clarity ) ) {
-		echo '<li><strong>' . esc_html__( 'Czystość (Clarity)', 'bigdiamond-white-prestige' ) . ':</strong> ' . esc_html( $clarity ) . '</li>';
-	}
-	if ( ! empty( $carat ) ) {
-		echo '<li><strong>' . esc_html__( 'Masa (Carat)', 'bigdiamond-white-prestige' ) . ':</strong> ' . esc_html( $carat ) . ' ct</li>';
-	}
-	echo '</ul>';
 
-	// Przycisk do certyfikatu
-	if ( ! empty( $cert_link ) ) {
-		echo '<p><a href="' . esc_url( $cert_link ) . '" class="bdwp-button" target="_blank" rel="noopener">' . esc_html__( 'Zobacz certyfikat GIA/IGI', 'bigdiamond-white-prestige' ) . '</a></p>';
+	if ( $cert_url ) {
+		echo '<p><a href="' . esc_url( $cert_url ) . '" class="bdwp-button bdwp-button--ghost" target="_blank" rel="noopener">' . esc_html__( 'Zobacz certyfikat GIA/IGI', 'bigdiamond-white-prestige' ) . '</a></p>';
 	}
 }
