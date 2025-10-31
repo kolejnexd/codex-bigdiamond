@@ -3215,20 +3215,23 @@ body.cart-drawer-open {
   list-style:none; margin:0; padding:0;
   display:grid; gap:24px; grid-template-columns: repeat(3, 1fr);
 }
+.bdwp-hero-cats__item{ list-style:none; }
 .bdwp-hero-cats__card{
-  display:block; text-decoration:none; color:#111; background:#fff;
-  border-radius:16px; overflow:hidden;
-  box-shadow: 0 18px 40px rgba(0,0,0,.10);
-  transition: transform .25s ease, box-shadow .25s ease;
+  display:block; text-decoration:none; color:#f5f5f5; background:rgba(18,18,18,0.65);
+  border-radius:18px; overflow:hidden;
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.32), 0 18px 46px rgba(0,0,0,0.35);
+  transition: transform .25s ease, box-shadow .25s ease, color .25s ease;
 }
-.bdwp-hero-cats__card:hover{ transform: translateY(-4px); box-shadow: 0 24px 60px rgba(0,0,0,.12); }
+.bdwp-hero-cats__card:hover,
+.bdwp-hero-cats__card:focus-visible{ transform: translateY(-6px); box-shadow: 0 0 0 1px rgba(255,215,148,0.65), 0 30px 60px rgba(0,0,0,0.42); outline: none; }
 
-.bdwp-hero-cats__media{ display:block; aspect-ratio: 4/3; overflow:hidden; }
-.bdwp-hero-cats__media img{ width:100%; height:100%; object-fit:cover; display:block; }
+.bdwp-hero-cats__media{ display:block; aspect-ratio: 4/3; overflow:hidden; background:#000; }
+.bdwp-hero-cats__media img{ width:100%; height:100%; object-fit:cover; display:block; filter: saturate(1.05) contrast(1.02); }
 .bdwp-hero-cats__label{
   display:block; text-transform:uppercase; letter-spacing:.6px;
   font-family: var(--wp--preset--font-family--playfair, "Playfair Display"), serif;
   padding:18px 20px 22px;
+  color:#fefefe;
 }
 
 /* RWD */

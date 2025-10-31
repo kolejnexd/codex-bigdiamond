@@ -35,16 +35,29 @@ add_action('wp_enqueue_scripts', 'bigdiamond_white_prestige_enqueue_assets', 60)
 function bigdiamond_white_prestige_enqueue_assets(): void {
 
 	/**
+	 * === Critical CSS (inline) ===
+	 * Preload najważniejszych zmiennych i fontów, aby ograniczyć CLS.
+	 */
+	$critical_rel = '/assets/css/critical-core.css';
+	if ( file_exists( BIGDIAMOND_WHITE_PRESTIGE_DIR . $critical_rel ) ) {
+		$critical_css = file_get_contents( BIGDIAMOND_WHITE_PRESTIGE_DIR . $critical_rel );
+		if ( false !== $critical_css ) {
+			wp_register_style( 'bdwp-critical-core', false, [], bdwp_asset_ver( $critical_rel ) );
+			wp_enqueue_style( 'bdwp-critical-core' );
+			wp_add_inline_style( 'bdwp-critical-core', $critical_css );
+		}
+	}
+
+	/**
 	 * === CSS główny motywu potomnego ===
-	 * Ładujemy po GeneratePress (jeśli zarejestrowany handle 'generate-style')
 	 */
 	$main_css_rel = '/assets/css/white-prestige.css';
-	if ( file_exists(BIGDIAMOND_WHITE_PRESTIGE_DIR . $main_css_rel) ) {
+	if ( file_exists( BIGDIAMOND_WHITE_PRESTIGE_DIR . $main_css_rel ) ) {
 		wp_enqueue_style(
 			'bdwp-white-prestige',
 			BIGDIAMOND_WHITE_PRESTIGE_URI . $main_css_rel,
-			wp_style_is('generate-style', 'registered') ? ['generate-style'] : [],
-			bdwp_asset_ver($main_css_rel)
+			wp_style_is( 'bdwp-critical-core', 'enqueued' ) ? [ 'bdwp-critical-core' ] : ( wp_style_is( 'generate-style', 'registered' ) ? [ 'generate-style' ] : [] ),
+			bdwp_asset_ver( $main_css_rel )
 		);
 	}
 
@@ -65,7 +78,7 @@ function bigdiamond_white_prestige_enqueue_assets(): void {
 				wp_enqueue_style(
 					'bdwp-woo',
 					BIGDIAMOND_WHITE_PRESTIGE_URI . $woo_css_rel,
-					['bdwp-white-prestige'],
+					[ 'bdwp-white-prestige' ],
 					bdwp_asset_ver($woo_css_rel)
 				);
 				break;
@@ -82,6 +95,29 @@ function bigdiamond_white_prestige_enqueue_assets(): void {
 		wp_dequeue_script('wc-add-to-cart');
 		wp_dequeue_script('woocommerce');
 		wp_dequeue_script('wc-cart-fragments');
+	}
+
+	$theme_styles = [
+		'bdwp-main' => '/assets/css/main.min.css',
+		'bdwp-blog' => '/assets/css/blog.min.css',
+	];
+
+	if ( file_exists( BIGDIAMOND_WHITE_PRESTIGE_DIR . $theme_styles['bdwp-main'] ) ) {
+		wp_enqueue_style(
+			'bdwp-main',
+			BIGDIAMOND_WHITE_PRESTIGE_URI . $theme_styles['bdwp-main'],
+			[ 'bdwp-white-prestige' ],
+			bdwp_asset_ver( $theme_styles['bdwp-main'] )
+		);
+	}
+
+	if ( file_exists( BIGDIAMOND_WHITE_PRESTIGE_DIR . $theme_styles['bdwp-blog'] ) && ( is_home() || is_singular( 'post' ) || is_category() || is_tag() || is_author() || is_date() || is_search() ) ) {
+		wp_enqueue_style(
+			'bdwp-blog',
+			BIGDIAMOND_WHITE_PRESTIGE_URI . $theme_styles['bdwp-blog'],
+			[ 'bdwp-main' ],
+			bdwp_asset_ver( $theme_styles['bdwp-blog'] )
+		);
 	}
 
 	/**
@@ -116,6 +152,25 @@ function bigdiamond_white_prestige_enqueue_assets(): void {
 		);
 		if ( function_exists('wp_script_add_data') ) {
 			wp_script_add_data('bdwp-main', 'strategy', 'defer');
+		}
+	}
+
+	/**
+	 * === JS: pdp.js dla strony produktu ===
+	 */
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		$pdp_js_rel = '/assets/js/pdp.js';
+		if ( file_exists( BIGDIAMOND_WHITE_PRESTIGE_DIR . $pdp_js_rel ) ) {
+			wp_enqueue_script(
+				'bdwp-pdp',
+				BIGDIAMOND_WHITE_PRESTIGE_URI . $pdp_js_rel,
+				[],
+				bdwp_asset_ver( $pdp_js_rel ),
+				true
+			);
+			if ( function_exists( 'wp_script_add_data' ) ) {
+				wp_script_add_data( 'bdwp-pdp', 'strategy', 'defer' );
+			}
 		}
 	}
 

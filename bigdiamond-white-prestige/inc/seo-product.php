@@ -23,6 +23,10 @@ function bigdiamond_white_prestige_output_product_schema(): void {
 		return;
 	}
 
+	if ( defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) ) {
+		return;
+	}
+
 	$product = function_exists( 'wc_get_product' ) ? wc_get_product( get_the_ID() ) : null;
 
 	if ( ! $product instanceof \WC_Product ) {
@@ -64,6 +68,34 @@ function bigdiamond_white_prestige_output_product_schema(): void {
 			'priceValidUntil' => gmdate( 'Y-m-d', strtotime( '+1 year' ) ),
 		),
 	);
+
+	if ( function_exists( 'bdwp_get_product_certificate_url' ) ) {
+		$certificate_url = bdwp_get_product_certificate_url( $product->get_id() );
+		if ( $certificate_url ) {
+			$schema['hasCertification'] = array(
+				'@type' => 'Certification',
+				'name'  => __( 'Certyfikat jakości diamentu', 'bigdiamond-white-prestige' ),
+				'url'   => esc_url( $certificate_url ),
+			);
+		}
+	}
+
+	if ( function_exists( 'bdwp_get_product_four_c_data' ) ) {
+		$four_c = bdwp_get_product_four_c_data( $product->get_id() );
+		if ( ! empty( $four_c ) ) {
+			$schema['additionalProperty'] = array();
+			foreach ( $four_c as $entry ) {
+				if ( empty( $entry['value'] ) ) {
+					continue;
+				}
+				$schema['additionalProperty'][] = array(
+					'@type' => 'PropertyValue',
+					'name'  => $entry['label'],
+					'value' => $entry['value'],
+				);
+			}
+		}
+	}
 
 	// === NOWOŚĆ: Dodaj identyfikatory globalne ===
 	if ( ! empty( $gtin ) ) {

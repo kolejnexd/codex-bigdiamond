@@ -18,6 +18,10 @@ $top_cats = get_terms([
   'order'      => 'DESC',
 ]);
 
+if ( is_wp_error( $top_cats ) ) {
+  $top_cats = [];
+}
+
 ?>
 <section class="bdwp-hero" role="region" aria-label="<?php esc_attr_e('Hero — BigDIAMOND', 'bigdiamond'); ?>">
   <div class="bdwp-hero__inner container">
@@ -47,17 +51,17 @@ $top_cats = get_terms([
 <!-- BRIDGE: karty kategorii nachodzące między hero (czarnym) a kolejną sekcją (jasną) -->
 <section class="bdwp-hero-bridge bdwp-hero-cats" aria-label="<?php esc_attr_e('Kategorie — skróty', 'bigdiamond'); ?>">
   <div class="container">
-    <ul class="bdwp-bridge-cats__grid">
+    <ul class="bdwp-hero-cats__grid">
       <?php foreach ( $top_cats as $term ) :
         $thumb_id = (int) get_term_meta( $term->term_id, 'thumbnail_id', true );
         $img_src  = $thumb_id ? wp_get_attachment_image_url( $thumb_id, 'large' ) : get_stylesheet_directory_uri() . '/assets/img/placeholder-4x3.jpg';
       ?>
-        <li class="bdwp-bridge-cats__item">
-          <a class="bdwp-bridge-cats__card" href="<?php echo esc_url( get_term_link( $term ) ); ?>">
-            <span class="bdwp-bridge-cats__media">
+        <li class="bdwp-hero-cats__item">
+          <a class="bdwp-hero-cats__card" href="<?php echo esc_url( get_term_link( $term ) ); ?>">
+            <span class="bdwp-hero-cats__media">
               <img src="<?php echo esc_url( $img_src ); ?>" alt="<?php echo esc_attr( $term->name ); ?>" width="800" height="600" loading="lazy" decoding="async" />
             </span>
-            <span class="bdwp-bridge-cats__label"><?php echo esc_html( $term->name ); ?></span>
+            <span class="bdwp-hero-cats__label"><?php echo esc_html( $term->name ); ?></span>
           </a>
         </li>
       <?php endforeach; ?>
