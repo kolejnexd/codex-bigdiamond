@@ -113,13 +113,13 @@ Aleje Diamentowe 1, 00-001 Warszawa<br />
 <h2 id="bdwp-contact-faq" class="bdwp-section-title"><?php esc_html_e( 'Najczęściej zadawane pytania', 'bigdiamond-white-prestige' ); ?></h2>
 <?php if ( ! empty( $faq_items ) ) : ?>
 <dl class="bdwp-faq" role="list">
-<?php foreach ( $faq_items as $item ) : ?>
+<?php foreach ( $faq_items as $index => $item ) : ?>
 <dt>
-<button class="bdwp-faq__toggle" type="button" aria-expanded="false">
+<button class="bdwp-faq__toggle" type="button" aria-expanded="false" aria-controls="faq-panel-contact-<?php echo esc_attr( (string) $index ); ?>">
 <?php echo esc_html( $item['question'] ); ?>
 </button>
 </dt>
-<dd class="bdwp-faq__panel" hidden>
+<dd id="faq-panel-contact-<?php echo esc_attr( (string) $index ); ?>" class="bdwp-faq__panel" hidden>
 <p><?php echo esc_html( $item['answer'] ); ?></p>
 </dd>
 <?php endforeach; ?>
