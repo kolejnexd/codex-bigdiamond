@@ -377,6 +377,18 @@ if ( function_exists( 'bigdiamond_white_prestige_recently_viewed_products' ) ) {
 }
 
 /**
+ * Dodanie nagłówków bezpieczeństwa (Security Headers)
+ */
+add_action( 'send_headers', 'bdwp_add_security_headers' );
+function bdwp_add_security_headers(): void {
+	if ( ! is_admin() ) {
+		header( 'X-Content-Type-Options: nosniff' );
+		header( 'X-Frame-Options: SAMEORIGIN' );
+		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
+	}
+}
+
+/**
  * Wczytaj moduły (łagodne require z guardem)
  * Uwaga: nie ładujemy tu żadnych template-parts; header korzysta z funkcji zdefiniowanych wyżej.
  */
