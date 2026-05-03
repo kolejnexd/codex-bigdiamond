@@ -35,7 +35,7 @@ $categories = get_the_category( $post_id );
 </a>
 </h2>
 <p class="bdwp-post-card__excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt( $post ), 26, '…' ) ); ?></p>
-<a class="bdwp-post-card__link" href="<?php echo esc_url( get_permalink( $post_id ) ); ?>">
+<a class="bdwp-post-card__link" href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Czytaj dalej: %s', 'bigdiamond-white-prestige' ), get_the_title( $post_id ) ) ); ?>">
 <?php esc_html_e( 'Czytaj dalej', 'bigdiamond-white-prestige' ); ?>
 <span aria-hidden="true" class="bdwp-post-card__icon"><?php echo bigdiamond_white_prestige_get_icon( 'arrow-right' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 </a>
