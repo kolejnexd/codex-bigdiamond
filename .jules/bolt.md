@@ -1,0 +1,3 @@
+## 2024-05-18 - WP_Query Performance Optimization
+**Learning:** When using `WP_Query` in WordPress without needing pagination (like when limiting `posts_per_page` explicitly to a set number as in recently viewed items), WordPress by default runs an expensive `SQL_CALC_FOUND_ROWS` query to calculate the total number of posts found.
+**Action:** Always add `'no_found_rows' => true` and `'ignore_sticky_posts' => true` to `WP_Query` arguments if pagination is not needed. This significantly skips expensive SQL calculations. (Note: `get_posts()` sets these optimizations automatically by default, unlike `WP_Query`).
