@@ -28,6 +28,9 @@ get_header();
 			</nav>
 		<?php else : ?>
 			<p><?php esc_html_e( 'Nie znaleźliśmy wyników. Spróbuj wyszukać inne słowa kluczowe.', 'bigdiamond-white-prestige' ); ?></p>
+			<div class="bdwp-search-empty">
+				<?php get_search_form(); ?>
+			</div>
 		<?php endif; ?>
 	</section>
 </main>
