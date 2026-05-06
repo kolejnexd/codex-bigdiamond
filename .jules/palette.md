@@ -1,0 +1,3 @@
+## 2024-05-24 - Accessibility for Repeated Icon Buttons
+**Learning:** Generic ARIA labels on repeated icon buttons (like "Remove item" in a shopping cart) create ambiguity for screen reader users when navigating by controls or elements out of context. They hear "Remove item" multiple times without knowing *which* item is being removed.
+**Action:** Always append the specific item's name (stripped of HTML tags using `wp_strip_all_tags` or similar) to the ARIA label of repeated icon buttons (e.g., `aria-label="Usuń produkt [Nazwa produktu]"`) to ensure they are distinguishable and provide clear context.
