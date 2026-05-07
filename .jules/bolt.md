@@ -1,0 +1,3 @@
+## 2026-05-07 - Optimize WP_Query for unpaginated queries
+**Learning:** In WordPress, `WP_Query` performs an expensive `SQL_CALC_FOUND_ROWS` by default to support pagination. If a query is unpaginated (like 'recently viewed products' limited to a fixed count), this calculation is wasted and causes unnecessary DB load. Additionally, sticky posts handling adds overhead. (Note: `get_posts()` optimizes this by default, but `WP_Query` does not).
+**Action:** Always add `'no_found_rows' => true` and `'ignore_sticky_posts' => true` to custom `WP_Query` arguments in this codebase when pagination is not required.
