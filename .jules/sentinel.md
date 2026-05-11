@@ -1,0 +1,4 @@
+## 2025-01-27 - Missing wp_unslash on superglobal input data
+**Vulnerability:** User input from `$_POST` (e.g., `$_POST['bdwp_engraving_text']`) was being passed directly to `sanitize_text_field` without `wp_unslash`.
+**Learning:** In WordPress, PHP superglobals like `$_POST`, `$_GET`, `$_COOKIE`, and `$_REQUEST` may have magic quotes applied or be slashed by WordPress automatically in some contexts. To ensure data integrity, prevent double-escaping, and follow WordPress security standards, these superglobals must always be unslashed before sanitization.
+**Prevention:** Always use `wp_unslash()` on variables coming from `$_POST`, `$_GET`, `$_COOKIE`, and `$_REQUEST` before passing them to sanitization functions like `sanitize_text_field()` or `sanitize_textarea_field()`.
