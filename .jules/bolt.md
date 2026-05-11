@@ -1,0 +1,3 @@
+## 2026-05-11 - [Optimize WP_Query no_found_rows]
+**Learning:** WP_Query calculates `SQL_CALC_FOUND_ROWS` by default for pagination, which can be a significant performance bottleneck. This occurs even when a limit (`posts_per_page`) is set and pagination is not required.
+**Action:** When querying posts without the need for pagination, always explicitly pass `'no_found_rows' => true` to the WP_Query arguments to skip this expensive calculation. For similar reasons, pass `'ignore_sticky_posts' => true` if sticky post logic isn't needed.
