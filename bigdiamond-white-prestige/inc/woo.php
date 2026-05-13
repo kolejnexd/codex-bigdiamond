@@ -219,12 +219,17 @@ function bigdiamond_white_prestige_recently_viewed_products(): void {
 		return;
 	}
 
+	// Optimize WP_Query for recently viewed products:
+	// Pagination is not needed here, so 'no_found_rows' skips the expensive SQL_CALC_FOUND_ROWS query.
+	// 'ignore_sticky_posts' prevents an additional query to fetch sticky posts.
 	$query = new WP_Query(
 		array(
-			'post_type'      => 'product',
-			'post__in'       => $viewed,
-			'orderby'        => 'post__in',
-			'posts_per_page' => count( $viewed ),
+			'post_type'           => 'product',
+			'post__in'            => $viewed,
+			'orderby'             => 'post__in',
+			'posts_per_page'      => count( $viewed ),
+			'no_found_rows'       => true,
+			'ignore_sticky_posts' => true,
 		)
 	);
 
