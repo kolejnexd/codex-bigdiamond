@@ -1,0 +1,3 @@
+## 2024-05-15 - [Dynamic ARIA labels for icon-only repeated elements]
+**Learning:** [When dealing with repeated icon-only buttons (like 'remove' buttons in a cart), static `aria-label`s like 'Remove product' result in poor screen reader experience because multiple identical buttons appear without context.]
+**Action:** [Always append the specific item's name, stripped of HTML tags using `wp_strip_all_tags`, to the `aria-label` of repeated icon buttons (e.g., `esc_attr( sprintf( __( 'Remove product %s', 'textdomain' ), wp_strip_all_tags( $name ) ) )`) to ensure they are distinct and meaningful to screen reader users.]
