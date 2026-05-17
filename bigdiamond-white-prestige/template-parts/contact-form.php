@@ -60,15 +60,15 @@ array(
 <h2 id="bdwp-contact-form" class="bdwp-section-title"><?php esc_html_e( 'Formularz kontaktowy', 'bigdiamond-white-prestige' ); ?></h2>
 <form class="bdwp-form" action="<?php echo esc_url( home_url( '/kontakt' ) ); ?>" method="post" novalidate>
 <div class="bdwp-form__group">
-<label for="bdwp-name"><?php esc_html_e( 'Imię', 'bigdiamond-white-prestige' ); ?></label>
+<label for="bdwp-name"><?php esc_html_e( 'Imię', 'bigdiamond-white-prestige' ); ?> <span aria-hidden="true">*</span><span class="screen-reader-text"><?php esc_html_e( 'pole wymagane', 'bigdiamond-white-prestige' ); ?></span></label>
 <input type="text" id="bdwp-name" name="bdwp-name" autocomplete="name" required aria-required="true" />
 </div>
 <div class="bdwp-form__group">
-<label for="bdwp-email"><?php esc_html_e( 'E-mail', 'bigdiamond-white-prestige' ); ?></label>
+<label for="bdwp-email"><?php esc_html_e( 'E-mail', 'bigdiamond-white-prestige' ); ?> <span aria-hidden="true">*</span><span class="screen-reader-text"><?php esc_html_e( 'pole wymagane', 'bigdiamond-white-prestige' ); ?></span></label>
 <input type="email" id="bdwp-email" name="bdwp-email" autocomplete="email" required aria-required="true" />
 </div>
 <div class="bdwp-form__group">
-<label for="bdwp-message"><?php esc_html_e( 'Twoja wiadomość', 'bigdiamond-white-prestige' ); ?></label>
+<label for="bdwp-message"><?php esc_html_e( 'Twoja wiadomość', 'bigdiamond-white-prestige' ); ?> <span aria-hidden="true">*</span><span class="screen-reader-text"><?php esc_html_e( 'pole wymagane', 'bigdiamond-white-prestige' ); ?></span></label>
 <textarea id="bdwp-message" name="bdwp-message" rows="5" required aria-required="true"></textarea>
 </div>
 <div class="bdwp-form__group bdwp-form__group--inline">
