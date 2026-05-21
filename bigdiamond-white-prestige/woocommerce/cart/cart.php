@@ -45,7 +45,7 @@ do_action( 'woocommerce_before_cart' );
 							printf( '<a href="%s" class="bdwp-cart__product-name">%s</a>', esc_url( $product_permalink ), wp_kses_post( $name ) );
 						}
                                                 echo wc_get_formatted_cart_item_data( $cart_item );
-                                                echo apply_filters( 'woocommerce_cart_item_remove_link', sprintf( '<a href="%s" class="bdwp-cart__remove" aria-label="%s" data-product_id="%s" data-cart_item_key="%s" data-product_sku="%s">&times;</a>', esc_url( wc_get_cart_remove_url( $cart_item_key ) ), esc_attr__( 'Usuń produkt', 'bigdiamond-white-prestige' ), esc_attr( $product_id ), esc_attr( $cart_item_key ), esc_attr( $product ? $product->get_sku() : '' ) ), $cart_item_key );
+                                                echo apply_filters( 'woocommerce_cart_item_remove_link', sprintf( '<a href="%s" class="bdwp-cart__remove" aria-label="%s" data-product_id="%s" data-cart_item_key="%s" data-product_sku="%s">&times;</a>', esc_url( wc_get_cart_remove_url( $cart_item_key ) ), esc_attr( sprintf( __( 'Usuń produkt: %s', 'bigdiamond-white-prestige' ), wp_strip_all_tags( $name ) ) ), esc_attr( $product_id ), esc_attr( $cart_item_key ), esc_attr( $product ? $product->get_sku() : '' ) ), $cart_item_key );
                                                 ?>
                                         </div>
                                         <div class="bdwp-cart__cell bdwp-cart__cell--price" role="cell" data-title="<?php esc_attr_e( 'Cena', 'woocommerce' ); ?>"><?php echo apply_filters( 'woocommerce_cart_item_price', WC()->cart->get_product_price( $product ), $cart_item, $cart_item_key ); ?></div>
