@@ -221,10 +221,13 @@ function bigdiamond_white_prestige_recently_viewed_products(): void {
 
 	$query = new WP_Query(
 		array(
-			'post_type'      => 'product',
-			'post__in'       => $viewed,
-			'orderby'        => 'post__in',
-			'posts_per_page' => count( $viewed ),
+			'post_type'           => 'product',
+			'post__in'            => $viewed,
+			'orderby'             => 'post__in',
+			'posts_per_page'      => count( $viewed ),
+			// Performance optimization: skip pagination calculations and sticky post checks since they aren't needed here.
+			'no_found_rows'       => true,
+			'ignore_sticky_posts' => true,
 		)
 	);
 
