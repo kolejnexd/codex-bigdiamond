@@ -49,16 +49,17 @@ $hero = $args['hero'];
 
 <section class="bdwp-section bdwp-section--faq" itemscope itemtype="https://schema.org/FAQPage">
         <div class="bdwp-section__inner">
-                <?php foreach ( $args['groups'] as $group ) : ?>
+                <?php foreach ( $args['groups'] as $group_idx => $group ) : ?>
                         <div class="bdwp-faq-group">
                                 <h2 class="bdwp-section__title"><?php echo esc_html( $group['title'] ); ?></h2>
                                 <div class="bdwp-faq">
-                                        <?php foreach ( $group['items'] as $item ) : ?>
+                                        <?php foreach ( $group['items'] as $item_idx => $item ) : ?>
+                                                <?php $faq_id = 'faq-' . $group_idx . '-' . $item_idx; ?>
                                                 <article class="bdwp-faq__item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-                                                        <button class="bdwp-faq__toggle" type="button" aria-expanded="false">
+                                                        <button class="bdwp-faq__toggle" type="button" aria-expanded="false" aria-controls="<?php echo esc_attr( $faq_id ); ?>">
                                                                 <span itemprop="name"><?php echo esc_html( $item['question'] ); ?></span>
                                                         </button>
-                                                        <div class="bdwp-faq__answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" hidden>
+                                                        <div id="<?php echo esc_attr( $faq_id ); ?>" class="bdwp-faq__answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" hidden>
                                                                 <p itemprop="text"><?php echo esc_html( $item['answer'] ); ?></p>
                                                         </div>
                                                 </article>
