@@ -1,0 +1,3 @@
+## 2026-06-13 - Optimize WP_Query Performance
+**Learning:** By default, WordPress queries execute `SQL_CALC_FOUND_ROWS` to support pagination, which forces the database to scan all matching rows even after the `LIMIT` is reached. Additionally, sticky post checks add overhead. For specific ID-based lookups (e.g., recently viewed products) where pagination isn't needed, this is unnecessary overhead.
+**Action:** When using `WP_Query` (unlike `get_posts()`, which defaults to skipping these), always explicitly add `'no_found_rows' => true` and `'ignore_sticky_posts' => true` to skip expensive database calculations unless pagination is strictly required.
