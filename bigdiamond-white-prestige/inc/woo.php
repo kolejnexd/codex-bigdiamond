@@ -225,6 +225,9 @@ function bigdiamond_white_prestige_recently_viewed_products(): void {
 			'post__in'       => $viewed,
 			'orderby'        => 'post__in',
 			'posts_per_page' => count( $viewed ),
+				// ⚡ Bolt: Skip expensive SQL_CALC_FOUND_ROWS and sticky checks since pagination is not needed
+				'no_found_rows'       => true,
+				'ignore_sticky_posts' => true,
 		)
 	);
 
