@@ -1,0 +1,4 @@
+## 2026-06-30 - Missing wp_unslash and type validation for $_POST data
+**Vulnerability:** The code processed `$_POST['bdwp_engraving_text']` directly with `sanitize_text_field` without first applying `wp_unslash` or checking if it is a string. This can lead to double-escaping issues (due to WordPress's magic quotes behavior) and potential array injection errors if an array is submitted.
+**Learning:** In WordPress, superglobals (like `$_POST`, `$_GET`) are slashed by default. Failing to unslash them before sanitization and failing to validate the input type (e.g., `is_string()`) bypasses secure data handling practices.
+**Prevention:** Always validate the type of incoming data from superglobals (e.g., `is_string()`) to prevent array injection, and always apply `wp_unslash()` before passing the data to sanitization functions like `sanitize_text_field()`.
