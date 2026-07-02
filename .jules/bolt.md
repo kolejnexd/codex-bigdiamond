@@ -1,0 +1,3 @@
+## 2026-07-02 - Optimize WP_Query with no_found_rows and ignore_sticky_posts
+**Learning:** By default, WordPress performs expensive `SQL_CALC_FOUND_ROWS` calculations to support pagination and checks for sticky posts, which can significantly degrade performance on large tables. When pagination is unnecessary, as seen in the "recently viewed products" section, explicitly adding `'no_found_rows' => true` and `'ignore_sticky_posts' => true` to `WP_Query` skips these operations.
+**Action:** Always verify if a `WP_Query` instance requires pagination or sticky posts. If not, include `'no_found_rows' => true` and `'ignore_sticky_posts' => true` in the arguments to improve query execution time.
