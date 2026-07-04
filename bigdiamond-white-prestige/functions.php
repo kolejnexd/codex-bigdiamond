@@ -425,8 +425,9 @@ function bdwp_add_engraving_field(): void {
  */
 add_filter( 'woocommerce_add_cart_item_data', 'bdwp_save_engraving_to_cart_item', 10, 3 );
 function bdwp_save_engraving_to_cart_item( array $cart_item_data, int $product_id, int $variation_id ): array {
-	if ( isset( $_POST['bdwp_engraving_text'] ) && ! empty( $_POST['bdwp_engraving_text'] ) ) {
-		$engraving_text = sanitize_text_field( $_POST['bdwp_engraving_text'] );
+	if ( isset( $_POST['bdwp_engraving_text'] ) && is_string( $_POST['bdwp_engraving_text'] ) && ! empty( $_POST['bdwp_engraving_text'] ) ) {
+		// Bezpieczeństwo: sprawdzamy typ, aby uniknąć ataku z użyciem tablicy i stosujemy wp_unslash
+		$engraving_text = sanitize_text_field( wp_unslash( $_POST['bdwp_engraving_text'] ) );
 		// Zapisujemy oczyszczony tekst grawerunku
 		$cart_item_data['bdwp_engraving'] = substr( $engraving_text, 0, 30 );
 	}
